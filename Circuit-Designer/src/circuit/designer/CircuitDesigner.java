@@ -1,8 +1,8 @@
 package circuit.designer;
 
 /**
- *
- * @author Keons
+ * @author Mathiw Rojas
+ * @version 8V30A
  */
 public class CircuitDesigner {
 
