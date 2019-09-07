@@ -1,6 +1,5 @@
 package circuit.designer;
 
-import circuit.designer.Calculos;
 
 /**
  * @author Mathiw Rojas
@@ -10,26 +9,29 @@ import circuit.designer.Calculos;
  */
 public class ClaseCompuertas {
     
-    private Calculos misCalculos = new Calculos();
     private String operador = null;
+    private boolean salida = true;
+    private ListaEntradas entrada;
     
     public ClaseCompuertas(String operador){
         this.operador = operador;
     }
     
     public String getOperador(){
-        return getOperadorAux();
+        return this.getOperadorAux();
     }
     private String getOperadorAux(){
         return this.operador;
     }
     
     public Boolean getSalida(){
-        return getSalidaAux();
+        return this.getSalidaAux();
     }
     public Boolean getSalidaAux(){
-        Boolean lol[]={true};
-        return misCalculos.calcularSalida(operador, lol);
+        if(entrada.getHead() != null){
+            return entrada.calcularOperacion();
+        }
+        return true;
     }
     
 }
