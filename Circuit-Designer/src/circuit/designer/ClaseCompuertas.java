@@ -20,18 +20,95 @@ public class ClaseCompuertas{
         InputGates=new Lista();
     }
     public void operacion( ){
-        Nodo current = InputGates.getHead();        
-        while (current!= null){
-            Entradas entrada = (Entradas)current.getData();
-            if(entrada.GetValor()){
-                this.OutputGates =  false;
-                break;
-            }else{
-                current = current.getNext();
-            }            
-        }
+        Nodo current = InputGates.getHead();
         if(current == null)
             OutputGates =  true;
+        switch(this.tipo){
+            
+            case "XOR":
+                this.OutputGates = false;
+                Entradas entrada = (Entradas)current.getData();
+                Boolean valorAnterior = entrada.GetValor();
+                current = current.getNext();         
+                while (current!= null){
+                    entrada = (Entradas)current.getData();
+                    if(entrada.GetValor() != valorAnterior){
+                        this.OutputGates =  true;
+                        break;
+                    }
+                current = current.getNext();         
+                }
+                break;   
+                
+            case "XNOR":
+                this.OutputGates = true;
+                entrada = (Entradas)current.getData();
+                valorAnterior = entrada.GetValor();
+                current = current.getNext();         
+                while (current!= null){
+                    entrada = (Entradas)current.getData();
+                    if(entrada.GetValor() != valorAnterior){
+                        this.OutputGates =  false;
+                        break;
+                    }
+                current = current.getNext();         
+                }
+                break;   
+            
+            case "AND":
+                this.OutputGates = true;
+                while (current!= null){
+                    entrada = (Entradas)current.getData();
+                    if(!entrada.GetValor()){
+                        this.OutputGates =  false;
+                        break;
+                    }else{
+                        current = current.getNext();
+                    }            
+                }
+                break;
+                
+            case "OR":
+                this.OutputGates = false;
+                while (current!= null){
+                    entrada = (Entradas)current.getData();
+                    if(entrada.GetValor()){
+                        this.OutputGates =  true;
+                        break;
+                    }else{
+                        current = current.getNext();
+                    }            
+                }
+                break;                
+                
+            case "NAND":
+                this.OutputGates = false;
+                while (current!= null){
+                    entrada = (Entradas)current.getData();
+                    if(!entrada.GetValor()){
+                        this.OutputGates =  true;
+                        break;
+                    }else{
+                        current = current.getNext();
+                    }            
+                }
+                break;                
+                
+            case "NOR":
+                this.OutputGates = true;
+                while (current!= null){
+                    entrada = (Entradas)current.getData();
+                    if(entrada.GetValor()){
+                        this.OutputGates =  false;
+                        break;
+                    }else{
+                        current = current.getNext();
+                    }            
+                }
+                break;   
+                
+                
+        }  
     }
 
     public int getId() {
@@ -52,53 +129,3 @@ public class ClaseCompuertas{
     }
     
 }
-  
-//class AND extends ClaseCompuertas{
-//    
-//    @Override
-//    public void operacion(){
-//        this.valor = !(InputGates.searchAmount(false)!=0);
-//    }
-//}
-//
-//class NAND extends ClaseCompuertas{
-//
-//    @Override
-//    public void operacion(){
-//        this.valor = (InputGates.searchAmount(false)!=0);
-//    }
-//}
-//
-//class OR extends ClaseCompuertas{
-//    @Override
-//    public void operacion(){
-//        this.valor = (InputGates.searchAmount(true)!=0);
-//    }
-//}
-//class NOR extends ClaseCompuertas{
-//    @Override
-//    public void operacion(){
-//        this.valor = !(InputGates.searchAmount(true)!=0);
-//    } 
-//}
-//class NOT extends ClaseCompuertas{
-//    
-//    @Override
-//    public void operacion(){
-//        this.valor= !((boolean)InputGates.getHead().getData()); 
-//    }
-//}
-//
-//class XOR extends ClaseCompuertas{
-//    @Override
-//    public void operacion(){
-//        this.valor= (InputGates.searchAmount(true)%2!=0);
-//    }
-//}
-//
-//class XNOR extends ClaseCompuertas{
-//    @Override
-//    public void operacion(){
-//        this.valor= !(InputGates.searchAmount(true)%2!=0);
-//    }
-//}

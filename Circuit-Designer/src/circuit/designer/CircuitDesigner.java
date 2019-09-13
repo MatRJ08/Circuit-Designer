@@ -7,16 +7,16 @@ package circuit.designer;
      */
     public static void main(String[] args) {
         Lista l2 = new Lista();
-        ClaseCompuertas compuerta = new ClaseCompuertas("And");
-        Entradas entrada1 = new Entradas(true);
+        ClaseCompuertas compuerta = new ClaseCompuertas("XNOR");
+        Entradas entrada1 = new Entradas(false);
         Entradas entrada2 = new Entradas(false);
         l2.insertFirst(compuerta);
         ClaseCompuertas entrada = (ClaseCompuertas)l2.getHead().getData();
         entrada.getEntradas().insertFirst(entrada1);
+        entrada.getEntradas().insertFirst(entrada1);
+        entrada.getEntradas().insertFirst(entrada2);
         entrada.getEntradas().insertFirst(entrada2);
         System.out.print(entrada.getSalida());
-        //l2.ConectarEntrada(true);
-        //System.out.print(l2.getSalida());
     }
     
 }
