@@ -62,59 +62,6 @@ public class Lista {
 
         }
     }
-    /**
-     * Función que busca un objeto en la lista y retorna la cantidad de veces que se encontró dicho parámetro
-     * @param x 
-     * @return La cantidad de veces que encontró a x en la lista
-     */
-    public int searchAmount(boolean x){ 
-        int amount=0;
-        Nodo current = head;
-        
-        while (current != null){ 
-            ClaseCompuertas actual =(ClaseCompuertas)current.getData();
-            if (actual.valor == x) 
-                amount++; 
-                 
-            current = current.getNext(); 
-        } 
-        return amount;     
-    }
-    
-    
-    /**
-     * Función que permite buscar un nodo de la lista por el ídice en el que se encuentra
-     * @param index Indice de la lista que se quiere buscar
-     * @return datos que contiene el nodo que se encuetra en ese índice
-     */
-    public Object searchByIndex(int index){
-        int counter=0;
-        Nodo temp= head;
-        while (counter<index){
-            temp=temp.getNext();
-            counter++;
-            
-        }
-        return temp.getData();
-    } 
-    /**
-     * Función que busca un nodo en una lista de instancias de ClaseCompuertas según su atributo de ID
-     * @param id
-     * @return La información del nodo que tiene esa ID o null si la ID no existe
-     */
-    public Object searchByID(int id){
-        Nodo current=head;
-        while(current!=null){
-            ClaseCompuertas actual= (ClaseCompuertas)current.getData();
-            if(actual.id==id){
-                return current.getData();
-            }
-            else{
-                current=current.getNext();
-            }
-        }
-        return null;
-    }
     
     /**
      * Método para imprimir en consola una lista
@@ -147,7 +94,7 @@ public class Lista {
         
         Nodo current = circuito.getHead();
         while (current != null){
-            ClaseCompuertas actual = (ClaseCompuertas)current.getData();
+            Compuertas actual = (Compuertas)current.getData();
             actual.operacion();
             current = current.getNext();
         }
