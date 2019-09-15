@@ -33,12 +33,6 @@ class Ven extends JFrame{
 	JButton entradas = new JButton("Agregar entradas");
 
 	
-	objeto AND  = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\AND.png");
-	objeto NOT  = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\NOT.png");
-	objeto NOR  = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\NOR.png");
-	objeto NAND = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\NAND.png");
-	objeto XOR  = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\XOR.png");
-	objeto XNOR = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\XNOR.png");
 	
 	int cont=0;
 	Listas[] Entradas = new Listas[100];
@@ -56,12 +50,6 @@ class Ven extends JFrame{
 		
 		
 		
-		AND.setBounds(1150,10,120,100);
-		NAND.setBounds(1150,100,120,100);
-		NOT.setBounds(1150,280,120,100);
-		NOR.setBounds(1150,370,120,100);
-		XOR.setBounds(1150,460,120,100);
-		XNOR.setBounds(1150,550,120,100);
 		simular.setBounds(50,575,100,25);
 		entradas.setBounds(180,575,160,25);
 		
@@ -78,26 +66,49 @@ class Ven extends JFrame{
 				cont++;
 			}
 		});
-		panel.add(AND);
-		panel.add(NAND);
-		panel.add(NOT);
-                addOr();
-		panel.add(NOR);
-		panel.add(XOR);
-		panel.add(XNOR);
+                addCompuerta("AND");
+                addCompuerta("OR");
+                addCompuerta("NOT");
+                addCompuerta("NAND");
+                addCompuerta("NOR");
+                addCompuerta("XOR");
+                addCompuerta("XNOR");
 		panel.add(simular);
 		panel.add(entradas);
 
 		add(panel);
 	}
         
-        public void addOr(){
+        
+        public void addCompuerta(String tipo){
             
-            objeto OR   = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\OR.png");
-            OR.setBounds(1150,190,120,100);
-            panel.add(OR);            
-            System.out.print("hello");
+            objeto compuerta   = new objeto("C:\\Users\\Keons\\Documents\\NetBeansProjects\\Circuit-Designer\\Circuit-Designer\\src\\Imagenes\\"+tipo+".png",tipo);
+            if(tipo.equals("OR")){
+                compuerta.setBounds(1150,190,120,100);
+            }
+            else if(tipo.equals("AND")){
+                compuerta.setBounds(1150,10,120,100);
+            }
+            else if(tipo.equals("NAND")){
+                compuerta.setBounds(1150,100,120,100);
+            }
+            else if(tipo.equals("NOT")){
+                compuerta.setBounds(1150,280,120,100);
+            }
+            else if(tipo.equals("NOR")){
+                compuerta.setBounds(1150,370,120,100);
+            }
+            else if(tipo.equals("XOR")){
+                compuerta.setBounds(1150,460,120,100);
+            }
+            else if(tipo.equals("XNOR")){
+                compuerta.setBounds(1150,550,120,100);
+            }
+            panel.add(compuerta);            
+            System.out.print("Nuevo "+tipo+" creado \n");
         }
+        
+        
 	public void Simular(JPanel P2,JFrame V2) {
 		this.V2=V2;
 		this.P2=P2;
@@ -144,8 +155,10 @@ class Ven extends JFrame{
 
 class objeto extends JLabel implements MouseMotionListener{
         Boolean movido = false;
-	public objeto(String ubic) {
-		ImageIcon nom= new ImageIcon(ubic);
+        String tipo;
+	public objeto(String ubic,String tipo) {
+		this.tipo = tipo;
+                ImageIcon nom= new ImageIcon(ubic);
 		setIcon(nom);
 		addMouseMotionListener(this);
 	}
@@ -153,7 +166,7 @@ class objeto extends JLabel implements MouseMotionListener{
 	public void mouseDragged(MouseEvent e) {	
 		if(!movido){
                     movido = true;
-                    addOr();
+                    addCompuerta(tipo);
                 }
 		setLocation(this.getX()+e.getX()-this.getWidth()/2, this.getY()+e.getY()-this.getHeight()/2 );
 	}
@@ -162,7 +175,7 @@ class objeto extends JLabel implements MouseMotionListener{
 	public void mouseMoved(MouseEvent e) {	
             
 	}
-}
+    }
 class LinePanel extends JPanel {
     Listas linea;
     Listas[] lin=new Listas[100];
