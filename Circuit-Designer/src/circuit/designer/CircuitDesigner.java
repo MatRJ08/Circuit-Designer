@@ -10,6 +10,7 @@ package circuit.designer;
         circuito.addCompuerta("OR");
         circuito.addCompuerta("NAND");
         circuito.addCompuerta("AND");
+        circuito.addCompuerta("AND");
         circuito.Conectar(2,1);
         circuito.Conectar(3,2);
         circuito.Simular();

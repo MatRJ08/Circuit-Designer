@@ -151,6 +151,30 @@ public class Compuertas{
     }
     
     
+    private void desconectarEntradasAux(Compuertas compuerta){ 
+        Nodo current = this.InputGates.getHead();
+        Entradas_Salidas entrada = (Entradas_Salidas)current.getNext().getData();
+        
+        while(entrada.getCompuerta().getId() == compuerta.getId()){
+            current = current.getNext();
+            entrada = (Entradas_Salidas)current.getNext().getData();
+        }
+        
+        current.setNext(current.getNext().getNext());        
+    }
+    public void desconectarEntradas(Compuertas compuerta){
+        this.desconectarEntradasAux(compuerta);
+    }
+    
+    
+    private void desconectarSalidaAux(){ 
+        this.OutputGate.setCompuerta(null);
+    }
+    public void desconectarSalida(){
+        this.desconectarSalidaAux();
+    }
+    
+    
     public String getTipoAux(){
         return this.tipo;
     }

@@ -5,6 +5,8 @@
  */
 package circuit.designer;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Keons
@@ -54,25 +56,47 @@ public class Circuito {
     
     public void Simular(){
         Compuertas compuerta = buscarFinal();
-        System.out.print(compuerta.getSalida().getValor());
+        if(compuerta == null){
+            System.err.print("No se puede simular");
+        }else
+            System.out.print(compuerta.getSalida().getValor());
     }
     
     
     public Compuertas buscarFinal(){
+        
         Nodo current =  circuito.getHead();
         Compuertas compuerta;
+        Compuertas ultima = null;
+        int bandera = 0;
+        
         while(current != null){
+            
             compuerta = (Compuertas)current.getData();
             Entradas_Salidas salida = compuerta.getSalida();
+            
             if(salida.getCompuerta() == null){
-                return compuerta;         
+                
+                if(bandera > 0){
+                    JOptionPane.showMessageDialog(null,"No se puede simular, una o más de las compuertas, no se encuentran conectadas al circuito", "Fallo de simulación",JOptionPane.ERROR_MESSAGE);
+                    return null;
+                }
+                
+                ultima = compuerta;  
+                bandera++;
+                current = current.getNext();  
+                
             }else{
                 current = current.getNext();                
             }
             
         }
         
-        return null;
+        if(bandera == 0){            
+            JOptionPane.showMessageDialog(null,"No se puede simular, el circuito no posee una salida definida", "Fallo de simulación",JOptionPane.ERROR_MESSAGE);
+        }
+        
+        return ultima;
     }
     
     
