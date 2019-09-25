@@ -1,6 +1,7 @@
 package circuit.designer;
 
 import com.sun.org.apache.bcel.internal.util.SecuritySupport;
+import java.util.Random;
 
 import javafx.event.EventHandler;
 import javafx.application.Application;
@@ -15,34 +16,34 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.Background;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 
 /**
  *
- * @author Keons
+ * @author Mat
+ * @version 25M09A
  */
+
 public class Grafica extends Application{
     
     Group root = new Group();
     Scene scene = new Scene(root, 1300, 725, Color.WHITE);
+    boolean drawing = false;
+    Lista lineas =  new Lista();
+    int lineasCont = 0;
+    Random rand = new Random();
+    
+    
     @Override
     /**
      * @see https://docs.oracle.com/javafx/2/scenegraph/jfxpub-scenegraph.htm 
      * @see https://docs.oracle.com/javafx/2/ui_controls/label.htm
-     * @see https://www.tutorialspoint.com/javafx/2dshapes_line.htm
     */
      public void start(Stage stage){
          
         stage.setTitle("Circuit Designer");
         stage.setScene(scene);
-         //Creating a line object
-        Line line = new Line(); 
-
-        //Setting the properties to a line 
-        line.setStartX(100.0); 
-        line.setStartY(150.0); 
-        line.setEndX(500.0); 
-        line.setEndY(150.0); 
-        root.getChildren().add(line);
+        
         stage.show();
         
         addObjeto("AND");
@@ -68,7 +69,8 @@ public class Grafica extends Application{
     * 
     * @see  https://docs.oracle.com/javafx/2/drag_drop/HelloDragAndDrop.java.html
     * se saca logica del drag & drop, este depues es modificado a prueba y error
-    * @verion 24M9A 
+    * 
+    * @verion 24K09C 
     */
     public void addObjeto(String tipo){
         Objeto objeto = new Objeto(tipo);
@@ -95,49 +97,98 @@ public class Grafica extends Application{
         }
         else if(tipo.equals("ADD")){
             objeto.relocate(350,550);
-        }
-//        objeto.relocate(200,200);   
-
-        objeto.setOnMouseDragged(new EventHandler <MouseEvent>() {
-            public void handle(MouseEvent event) {
-                /* drag was detected, start drag-and-drop gesture*/
-                System.out.println("onDragDetected");
-                objeto.relocate(event.getSceneX(),event.getSceneY());
-                addObjeto(tipo);
-//                /* allow any transfer mode */
-//                Dragboard db = objeto.startDragAndDrop(TransferMode.MOVE);
-//                
-//                /* put a string on dragboard */
-//                ClipboardContent content = new ClipboardContent();
-//                content.putString(objeto.getText());
-//                db.setContent(content);
-//                
-                event.consume();
-            }
-        });
-        objeto.setOnDragOver(new EventHandler <DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data is dragged over the target */
-                System.out.println("onDragOver");
-                
-                /* accept it only if it is  not dragged from the same node 
-                 * and if it has a string data */
-//                if (event.getGestureSource() != target &&
-//                        event.getDragboard().hasString()) {
-//                    /* allow for both copying and moving, whatever user chooses */
-//                }
-                
-                event.acceptTransferModes(TransferMode.MOVE);
-                event.consume();
-            }
-        });
+        }  
+        addEvents(objeto);        
+        
         System.out.print("Nuevo "+tipo+" creado \n");
         root.getChildren().add(objeto);
     }
     
+    /**
+     * @version 25M09K
+     * @param objeto 
+     */
+    private void addEvents(Objeto objeto){
+    
+        objeto.setOnMouseDragged(new EventHandler <MouseEvent>() {
+            public void handle(MouseEvent event) {
+                
+                if(event.getButton().equals(MouseButton.PRIMARY)){
+                    
+                    objeto.relocate(event.getSceneX()-70,event.getSceneY()-30);
+                    if(!objeto.getMovido()){
+                        addObjeto(objeto.getTipo());
+                        objeto.setMovido(true);
+                    }
+                   
+                    
+                }else if(event.getButton().equals(MouseButton.SECONDARY)){
+                        
+                    drawLines(objeto,event);
+                    
+                }
+       
+                event.consume();
+            }
+        });
+        
+        objeto.setOnMouseReleased(new EventHandler <MouseEvent>() {
+            public void handle(MouseEvent event) {
+                drawing = false;
+                event.consume();
+            }
+        });
+        
+    }
+    
+    
+    /**
+     * 
+     * @param objeto
+     * @param event
+     * 
+     * @see https://www.tutorialspoint.com/javafx/2dshapes_line.htm
+     * se saca como utilizar las lineas
+     * 
+     * @see https://www.geneseo.edu/~baldwin/reference/random.html
+     * como utilizar rand
+     * 
+     * @see http://www.java2s.com/Tutorials/Java/JavaFX/0040__JavaFX_Line.htm
+     * algunas propiedades de line
+     * 
+     * @version 25M09C
+     */
+    private void drawLines(Objeto objeto,MouseEvent event){
+        Linea line;
+        if(!drawing){
+            line = new Linea(); 
+            drawing = true;
+            line.setStartX(objeto.getLayoutX()+objeto.getWidth()); 
+            line.setStartY(objeto.getLayoutY()+(objeto.getHeight()/2)); 
+            line.setStroke(Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)));
+            line.setStrokeLineCap(StrokeLineCap.ROUND);
+            line.setStrokeWidth(3);
+            lineas.insertFirst(line);
+            
+            root.getChildren().add(line);
+        }else{
+            line = ObtenerLinea();
+        }
+
+        //Setting the properties to a line 
+        line.setEndX(event.getScreenX()); 
+        line.setEndY(event.getScreenY()); 
+    }
+    
+    
+    /**
+     * 
+     * @version 24K09A 
+     */
     public class Objeto extends Label{
-        String tipo;
-        Boolean movido = false;
+        private String tipo;
+        private Boolean movido = false;
+
         public Objeto(String tipo){
             Image image = new Image(getClass().getResourceAsStream("/Imagenes/"+tipo+".png"));
             this.tipo = tipo;
@@ -145,7 +196,62 @@ public class Grafica extends Application{
             setGraphic(new ImageView(image));
         }
         
+        
+        public String getTipo() {
+            return this.tipo;
+        }
+
+        public Boolean getMovido() {
+            return this.movido;
+        }
+
+        public void setTipo(String tipo) {
+            this.tipo = tipo;
+        }
+
+        public void setMovido(Boolean movido) {
+            this.movido = movido;
+        }
+       
+               
+    }
+    
+    /**
+     * 
+     * @author Mat
+     * @version 24K09B
+     */
+    private class Linea extends Line{
+        int lineaId;
+        public Linea(){
+            this.lineaId = ++lineasCont;
+        }
+
+        public int getLineaId() {
+            return lineaId;
+        }
+
+        public void setLineaId(int lineaId) {
+            this.lineaId = lineaId;
+        }
+        
        
         
+    }
+    
+    /**
+     * @since 25M09A
+     * @return 
+     */
+    private Linea ObtenerLinea(){
+        Nodo current = lineas.getHead();
+        Linea linea;
+        while(current != null){
+            linea = (Linea)current.getData();
+            if(linea.getLineaId() == lineasCont){
+                return linea;
+            }
+        }
+        return null;
     }
 }
