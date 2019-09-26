@@ -2,6 +2,8 @@ package circuit.designer;
 
 import com.sun.org.apache.bcel.internal.util.SecuritySupport;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.event.EventHandler;
 import javafx.application.Application;
@@ -28,11 +30,15 @@ public class Grafica extends Application{
     
     Group root = new Group();
     Scene scene = new Scene(root, 1300, 725, Color.WHITE);
-    boolean drawing = false;
     Lista lineas =  new Lista();
-    int lineasCont = 0;
+    int lineasIds = 0;
+    int objetosIds = 0;
     Random rand = new Random();
     
+    Circuito circuito = new Circuito();
+    boolean drawing = false;
+    Objeto entrada = null;
+    Objeto salida = null;
     
     @Override
     /**
@@ -53,7 +59,6 @@ public class Grafica extends Application{
         addObjeto("NOR");
         addObjeto("XOR");
         addObjeto("XNOR");
-        addObjeto("ADD");
         
     }
     
@@ -73,7 +78,7 @@ public class Grafica extends Application{
     * @verion 24K09C 
     */
     public void addObjeto(String tipo){
-        Objeto objeto = new Objeto(tipo);
+        Objeto objeto = new Objeto(tipo,++objetosIds);
         if(tipo.equals("OR")){
             objeto.relocate(1150,190);
         }
@@ -95,14 +100,13 @@ public class Grafica extends Application{
         else if(tipo.equals("XNOR")){
             objeto.relocate(1150,550);
         }
-        else if(tipo.equals("ADD")){
-            objeto.relocate(350,550);
-        }  
         addEvents(objeto);        
         
         System.out.print("Nuevo "+tipo+" creado \n");
         root.getChildren().add(objeto);
     }
+    
+    
     
     /**
      * @version 25M09K
@@ -110,6 +114,24 @@ public class Grafica extends Application{
      */
     private void addEvents(Objeto objeto){
     
+        objeto.setOnMouseClicked(new EventHandler <MouseEvent>() {
+            public void handle(MouseEvent event) {
+                
+                if(event.getButton().equals(MouseButton.SECONDARY)){
+                    System.out.print("hola");
+                    if(salida == null){
+                        salida = objeto;
+                    }
+                    else{
+                        entrada=objeto;
+                        drawLines(salida,objeto);
+                        circuito.Conectar(salida.getObjetoId(),entrada.getObjetoId());
+                    }
+                }
+            }
+            
+        });
+        
         objeto.setOnMouseDragged(new EventHandler <MouseEvent>() {
             public void handle(MouseEvent event) {
                 
@@ -122,30 +144,58 @@ public class Grafica extends Application{
                     }
                    
                     
-                }else if(event.getButton().equals(MouseButton.SECONDARY)){
-                        
-                    drawLines(objeto,event);
-                    
                 }
+//                else if(event.getButton().equals(MouseButton.SECONDARY)){
+////                    destino = objeto;    
+//                    drawLines(objeto,event);
+//                    salida = objeto;
+//                    
+//                }
        
                 event.consume();
             }
         });
         
-        objeto.setOnMouseReleased(new EventHandler <MouseEvent>() {
-            public void handle(MouseEvent event) {
-                drawing = false;
-                event.consume();
-            }
-        });
+//        objeto.setOnMouseReleased(new EventHandler <MouseEvent>() {
+//            
+//            public void handle(MouseEvent event) {
+//                if(drawing){
+//                    
+//                    drawing = false;
+//                    salida = objeto;
+//
+//                    event.consume();
+//                    
+//                }
+//                             
+//            }
+//            
+//        });        
+//        objeto.setOnMouseDragOver(new EventHandler <MouseEvent>() {
+//            public void handle(MouseEvent event) {
+//                if(drawing && salida != objeto){
+//                    System.out.print("Hola");
+//                    entrada = objeto;
+//                    if(entrada == null){
+//                        System.out.print(objeto.getTipo()+"\n");
+//                        EliminarLinea();
+//                    }else{
+//                        circuito.Conectar(salida.getObjetoId(),entrada.getObjetoId());
+//                        entrada = null;
+//                        System.out.print("Destino null \n");
+//                    }
+//                }
+//            }
+//        });
         
     }
     
     
+    
     /**
      * 
-     * @param objeto
-     * @param event
+     * @param salida
+     * @param entrada
      * 
      * @see https://www.tutorialspoint.com/javafx/2dshapes_line.htm
      * se saca como utilizar las lineas
@@ -158,26 +208,27 @@ public class Grafica extends Application{
      * 
      * @version 25M09C
      */
-    private void drawLines(Objeto objeto,MouseEvent event){
+    private void drawLines(Objeto salida,Objeto entrada){
         Linea line;
         if(!drawing){
             line = new Linea(); 
             drawing = true;
-            line.setStartX(objeto.getLayoutX()+objeto.getWidth()); 
-            line.setStartY(objeto.getLayoutY()+(objeto.getHeight()/2)); 
+            
+            line.setStartX(salida.getLayoutX()+salida.getWidth()); 
+            line.setStartY(salida.getLayoutY()+(salida.getHeight()/2)); 
             line.setStroke(Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)));
             line.setStrokeLineCap(StrokeLineCap.ROUND);
             line.setStrokeWidth(3);
-            lineas.insertFirst(line);
             
+            lineas.insertFirst(line);            
             root.getChildren().add(line);
         }else{
             line = ObtenerLinea();
         }
 
         //Setting the properties to a line 
-        line.setEndX(event.getScreenX()); 
-        line.setEndY(event.getScreenY()); 
+        line.setEndX(entrada.getLayoutX()); 
+        line.setEndY(entrada.getLayoutY()+entrada.getHeight()/2); 
     }
     
     
@@ -188,12 +239,18 @@ public class Grafica extends Application{
     public class Objeto extends Label{
         private String tipo;
         private Boolean movido = false;
-
-        public Objeto(String tipo){
-            Image image = new Image(getClass().getResourceAsStream("/Imagenes/"+tipo+".png"));
+        private int objetoId;
+        
+        public Objeto(String tipo, int id){
             this.tipo = tipo;
+            this.objetoId = id;
+            
+            circuito.addCompuerta(tipo);
+            
+            Image image = new Image(getClass().getResourceAsStream("/Imagenes/"+tipo+".png"));
             setBackground(Background.EMPTY);
             setGraphic(new ImageView(image));
+            
         }
         
         
@@ -212,6 +269,18 @@ public class Grafica extends Application{
         public void setMovido(Boolean movido) {
             this.movido = movido;
         }
+
+        public int getObjetoId() {
+            return objetoId;
+        }
+
+        public void setObjetoId(int objetoId) {
+            this.objetoId = objetoId;
+        }
+
+        
+        
+        
        
                
     }
@@ -224,7 +293,7 @@ public class Grafica extends Application{
     private class Linea extends Line{
         int lineaId;
         public Linea(){
-            this.lineaId = ++lineasCont;
+            this.lineaId = ++lineasIds;
         }
 
         public int getLineaId() {
@@ -248,10 +317,19 @@ public class Grafica extends Application{
         Linea linea;
         while(current != null){
             linea = (Linea)current.getData();
-            if(linea.getLineaId() == lineasCont){
+            if(linea.getLineaId() == lineasIds){
                 return linea;
             }
+            current = current.getNext();
         }
         return null;
+    }
+    
+    /**
+     * @since 25M09A
+     * @return 
+     */
+    private void EliminarLinea(){
+        lineas.deleteFirst();
     }
 }

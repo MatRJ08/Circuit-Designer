@@ -12,11 +12,17 @@ import javax.swing.JOptionPane;
  * @author Keons
  */
 public class Circuito {
-    int i = 0;
-    int o = 0;
-    int cantCompuertas = 0;
+    int i;
+    int o;
+    int cantCompuertas;
     
-    Lista circuito = new Lista();
+    Lista circuitList = new Lista();
+    
+    public Circuito(){
+        o = 0;
+        cantCompuertas = 0;
+        i=0;
+    }
     
     public void addCompuerta(String tipo){        
         Compuertas compuerta = new Compuertas(tipo,++cantCompuertas,++o);
@@ -24,7 +30,7 @@ public class Circuito {
         Entradas_Salidas entrada2 = new Entradas_Salidas(true,++i);
         compuerta.getEntradas().insertFirst(entrada);
         compuerta.getEntradas().insertFirst(entrada2);
-        circuito.insertFirst(compuerta);
+        circuitList.insertFirst(compuerta);
     }
     
     public void Conectar(int id1, int id2){        
@@ -37,7 +43,7 @@ public class Circuito {
     
     
     public Compuertas buscarId(int id){
-        Nodo current =  circuito.getHead();
+        Nodo current =  circuitList.getHead();
         Compuertas compuerta;
         while(current != null){
             compuerta = (Compuertas)current.getData();
@@ -65,7 +71,7 @@ public class Circuito {
     
     public Compuertas buscarFinal(){
         
-        Nodo current =  circuito.getHead();
+        Nodo current =  circuitList.getHead();
         Compuertas compuerta;
         Compuertas ultima = null;
         int bandera = 0;
