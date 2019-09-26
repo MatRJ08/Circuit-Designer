@@ -14,18 +14,16 @@ import javax.swing.JOptionPane;
 public class Circuito {
     int i;
     int o;
-    int cantCompuertas;
     
     Lista circuitList = new Lista();
     
     public Circuito(){
         o = 0;
-        cantCompuertas = 0;
         i=0;
     }
     
-    public void addCompuerta(String tipo){        
-        Compuertas compuerta = new Compuertas(tipo,++cantCompuertas,++o);
+    public void addCompuerta(String tipo,int id){        
+        Compuertas compuerta = new Compuertas(tipo,id,++o);
         Entradas_Salidas entrada = new Entradas_Salidas(true,++i);
         Entradas_Salidas entrada2 = new Entradas_Salidas(true,++i);
         compuerta.getEntradas().insertFirst(entrada);

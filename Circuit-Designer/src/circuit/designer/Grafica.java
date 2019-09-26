@@ -1,14 +1,14 @@
 package circuit.designer;
 
 import com.sun.org.apache.bcel.internal.util.SecuritySupport;
+import javafx.event.ActionEvent;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.event.EventHandler;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -51,7 +51,15 @@ public class Grafica extends Application{
         stage.setScene(scene);
         
         stage.show();
-        
+       
+        Button simular =new Button("Simular");
+        simular.relocate(50, 675);
+        simular.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                circuito.Simular();
+            }
+        });
+        root.getChildren().add(simular);
         addObjeto("AND");
         addObjeto("OR");
         addObjeto("NOT");
@@ -140,6 +148,7 @@ public class Grafica extends Application{
                     objeto.relocate(event.getSceneX()-70,event.getSceneY()-30);
                     if(!objeto.getMovido()){
                         addObjeto(objeto.getTipo());
+                        circuito.addCompuerta(objeto.getTipo(),objeto.getObjetoId());
                         objeto.setMovido(true);
                     }
                    
@@ -159,14 +168,7 @@ public class Grafica extends Application{
 //        objeto.setOnMouseReleased(new EventHandler <MouseEvent>() {
 //            
 //            public void handle(MouseEvent event) {
-//                if(drawing){
-//                    
-//                    drawing = false;
-//                    salida = objeto;
-//
-//                    event.consume();
-//                    
-//                }
+//            if(!objeto.getMovido())    
 //                             
 //            }
 //            
@@ -245,7 +247,6 @@ public class Grafica extends Application{
             this.tipo = tipo;
             this.objetoId = id;
             
-            circuito.addCompuerta(tipo);
             
             Image image = new Image(getClass().getResourceAsStream("/Imagenes/"+tipo+".png"));
             setBackground(Background.EMPTY);

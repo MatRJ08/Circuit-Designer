@@ -13,6 +13,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import javafx.event.EventHandler;
 
 import javax.swing.*;
 
@@ -74,16 +75,7 @@ class Ven extends javax.swing.JFrame{
         simular.setBounds(50,575,100,25);
         entradas.setBounds(180,575,160,25);
 
-        simular.addActionListener(new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent arg0) {	
-
-//                Simular(P2,V2);
-
-            }
-                
-        });
+        
         
         entradas.addActionListener(new ActionListener() {
             @Override
