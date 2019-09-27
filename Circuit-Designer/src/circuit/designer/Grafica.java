@@ -105,7 +105,8 @@ public class Grafica extends Application{
         while( current != null){
             Objeto entrada = (Objeto)current.getData();
             col = new TableColumn("Entrada numero "+String.valueOf(++i));
-            current.setNext(current.getNext());
+            current= current.getNext();
+            tablaEntradas.getColumns().add(col);
         }
         root.getChildren().addAll(tablaEntradas);
     }
