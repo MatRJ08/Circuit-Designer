@@ -40,12 +40,21 @@ public class Grafica extends Application{
     Objeto entrada = null;
     Objeto salida = null;
     
+    int oIds = 0;
+    int iIds = 0;
+    
+    
+//    static Stage classStage = new Stage();
+    
     @Override
     /**
      * @see https://docs.oracle.com/javafx/2/scenegraph/jfxpub-scenegraph.htm 
      * @see https://docs.oracle.com/javafx/2/ui_controls/label.htm
+     * @see http://www.java2s.com/Code/Java/JavaFX/AddClickactionlistenertoButton.htmS
     */
      public void start(Stage stage){
+        
+//        classStage = stage;
          
         stage.setTitle("Circuit Designer");
         stage.setScene(scene);
@@ -67,6 +76,8 @@ public class Grafica extends Application{
         addObjeto("NOR");
         addObjeto("XOR");
         addObjeto("XNOR");
+        addObjeto("TRUE");
+        addObjeto("FALSE");
         
     }
     
@@ -86,27 +97,37 @@ public class Grafica extends Application{
     * @verion 24K09C 
     */
     public void addObjeto(String tipo){
-        Objeto objeto = new Objeto(tipo,++objetosIds);
-        if(tipo.equals("OR")){
-            objeto.relocate(1150,190);
-        }
-        else if(tipo.equals("AND")){
-            objeto.relocate(1150,10);
-        }
-        else if(tipo.equals("NAND")){
-            objeto.relocate(1150,100);
-        }
-        else if(tipo.equals("NOT")){
-            objeto.relocate(1150,280);
-        }
-        else if(tipo.equals("NOR")){
-            objeto.relocate(1150,370);
-        }
-        else if(tipo.equals("XOR")){
-            objeto.relocate(1150,460);
-        }
-        else if(tipo.equals("XNOR")){
-            objeto.relocate(1150,550);
+        Objeto objeto = new Objeto(tipo);
+        switch (tipo) {
+            case "OR":
+                objeto.relocate(1150,190);
+                break;
+            case "AND":
+                objeto.relocate(1150,10);
+                break;
+            case "NAND":
+                objeto.relocate(1150,100);
+                break;
+            case "NOT":
+                objeto.relocate(1150,280);
+                break;
+            case "NOR":
+                objeto.relocate(1150,370);
+                break;
+            case "XOR":
+                objeto.relocate(1150,460);
+                break;
+            case "XNOR":
+                objeto.relocate(1150,550);
+                break;
+            case "TRUE":
+                objeto.relocate(1150,675);
+                break;
+            case "FALSE":
+                objeto.relocate(1200,675);
+                break;
+            default:
+                break;
         }
         addEvents(objeto);        
         
@@ -129,11 +150,21 @@ public class Grafica extends Application{
                     System.out.print("hola");
                     if(salida == null){
                         salida = objeto;
+                        System.out.print(salida.getTipo());
                     }
                     else{
-                        entrada=objeto;
+                        if(salida.getTipo() != "FALSE" && salida.getTipo() != "TRUE"){
+                            entrada = objeto;
+                            circuito.Conectar(salida.getObjetoId(),objeto.getObjetoId());
+                            
+                        }else{
+                            System.out.print(objeto.getObjetoId());
+                            circuito.ConectarBool(salida.getTipo(), objeto.getObjetoId());
+                            
+                        }
                         drawLines(salida,objeto);
-                        circuito.Conectar(salida.getObjetoId(),entrada.getObjetoId());
+                        salida = null;
+                        entrada = null;
                     }
                 }
             }
@@ -146,10 +177,17 @@ public class Grafica extends Application{
                 if(event.getButton().equals(MouseButton.PRIMARY)){
                     
                     objeto.relocate(event.getSceneX()-70,event.getSceneY()-30);
+                    
                     if(!objeto.getMovido()){
+                        
+                        if(objeto.getTipo() != "FALSE" && objeto.getTipo() != "TRUE"){
+                            objeto.setObjetoId(++objetosIds);
+                            Compuertas compuerta = circuito.addCompuerta(objeto.getTipo(),objeto.getObjetoId());
+                            objeto.setCompuerta(compuerta);
+                        }
                         addObjeto(objeto.getTipo());
-                        circuito.addCompuerta(objeto.getTipo(),objeto.getObjetoId());
                         objeto.setMovido(true);
+                        
                     }
                    
                     
@@ -165,14 +203,19 @@ public class Grafica extends Application{
             }
         });
         
-//        objeto.setOnMouseReleased(new EventHandler <MouseEvent>() {
-//            
-//            public void handle(MouseEvent event) {
-//            if(!objeto.getMovido())    
-//                             
-//            }
-//            
-//        });        
+        objeto.setOnMouseReleased(new EventHandler <MouseEvent>() {
+            
+            public void handle(MouseEvent event) {
+                
+                if(!objeto.getDropped())  {                     
+                    if(objeto.getTipo() != "FALSE" && objeto.getTipo() != "TRUE"){
+                        addTags(null, objeto);
+                        objeto.setDropped(true);
+                    }
+                }
+                
+            }
+        });        
 //        objeto.setOnMouseDragOver(new EventHandler <MouseEvent>() {
 //            public void handle(MouseEvent event) {
 //                if(drawing && salida != objeto){
@@ -212,25 +255,37 @@ public class Grafica extends Application{
      */
     private void drawLines(Objeto salida,Objeto entrada){
         Linea line;
-        if(!drawing){
-            line = new Linea(); 
-            drawing = true;
-            
-            line.setStartX(salida.getLayoutX()+salida.getWidth()); 
-            line.setStartY(salida.getLayoutY()+(salida.getHeight()/2)); 
-            line.setStroke(Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)));
-            line.setStrokeLineCap(StrokeLineCap.ROUND);
-            line.setStrokeWidth(3);
-            
-            lineas.insertFirst(line);            
-            root.getChildren().add(line);
-        }else{
-            line = ObtenerLinea();
-        }
+//        if(!drawing){
+        line = new Linea(); 
+        drawing = true;
 
-        //Setting the properties to a line 
+        line.setStartX(salida.getLayoutX()+salida.getWidth()); 
+        line.setStartY(salida.getLayoutY()+(salida.getHeight()/2)); 
+        line.setStroke(Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)));
+        line.setStrokeLineCap(StrokeLineCap.ROUND);
+        line.setStrokeWidth(3);
+
+        lineas.insertFirst(line);            
+        root.getChildren().add(line);
+        
         line.setEndX(entrada.getLayoutX()); 
         line.setEndY(entrada.getLayoutY()+entrada.getHeight()/2); 
+
+        addTags(entrada,null);
+    }
+    
+    
+    public void addTags(Objeto entrada, Objeto salida){
+        if(salida == null){
+            
+            Label i = new Label("i<"+String.valueOf(circuito.getI())+">");
+            i.relocate(entrada.getLayoutX()-30,entrada.getLayoutY()+entrada.getHeight()/2);
+            root.getChildren().add(i);
+        }else{
+            Label o = new Label("o<"+String.valueOf(salida.getCompuerta().getId())+">");
+            o.relocate(salida.getLayoutX()+salida.getWidth()+5,salida.getLayoutY()+salida.getHeight()/2);
+            root.getChildren().add(o);
+        }
     }
     
     
@@ -239,13 +294,16 @@ public class Grafica extends Application{
      * @version 24K09A 
      */
     public class Objeto extends Label{
+        
         private String tipo;
         private Boolean movido = false;
+        private Boolean dropped = false;
         private int objetoId;
+        private Compuertas compuerta;
         
-        public Objeto(String tipo, int id){
+        public Objeto(String tipo){
             this.tipo = tipo;
-            this.objetoId = id;
+//            this.objetoId = id;
             
             
             Image image = new Image(getClass().getResourceAsStream("/Imagenes/"+tipo+".png"));
@@ -256,6 +314,7 @@ public class Grafica extends Application{
         
         
         public String getTipo() {
+//            System.out.print(tipo);
             return this.tipo;
         }
 
@@ -278,6 +337,27 @@ public class Grafica extends Application{
         public void setObjetoId(int objetoId) {
             this.objetoId = objetoId;
         }
+
+        public Compuertas getCompuerta() {
+            return compuerta;
+        }
+
+        public void setCompuerta(Compuertas compuerta) {
+            this.compuerta = compuerta;
+        }
+
+        public Boolean getDropped() {
+            return dropped;
+        }
+
+        public void setDropped(Boolean dropped) {
+            this.dropped = dropped;
+        }
+        
+        
+        
+        
+        
 
         
         

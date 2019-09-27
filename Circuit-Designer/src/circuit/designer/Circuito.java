@@ -12,8 +12,8 @@ import javax.swing.JOptionPane;
  * @author Keons
  */
 public class Circuito {
-    int i;
-    int o;
+    private int i;
+    private int o;
     
     Lista circuitList = new Lista();
     
@@ -21,21 +21,39 @@ public class Circuito {
         o = 0;
         i=0;
     }
-    
-    public void addCompuerta(String tipo,int id){        
-        Compuertas compuerta = new Compuertas(tipo,id,++o);
-        Entradas_Salidas entrada = new Entradas_Salidas(true,++i);
-        Entradas_Salidas entrada2 = new Entradas_Salidas(true,++i);
-        compuerta.getEntradas().insertFirst(entrada);
-        compuerta.getEntradas().insertFirst(entrada2);
-        circuitList.insertFirst(compuerta);
+
+    public int getI() {
+        return i;
     }
+    
+    
+    
+    public Compuertas addCompuerta(String tipo,int id){        
+        Compuertas compuerta = new Compuertas(tipo,id,++o);
+//        Entradas_Salidas entrada = new Entradas_Salidas(true,++i);
+//        Entradas_Salidas entrada2 = new Entradas_Salidas(true,++i);
+//        compuerta.getEntradas().insertFirst(entrada);
+//        compuerta.getEntradas().insertFirst(entrada2);
+        circuitList.insertFirst(compuerta);
+        return compuerta;
+    }
+    
     
     public void Conectar(int id1, int id2){        
         Compuertas compuerta1 = buscarId(id1);
         Compuertas compuerta2 = buscarId(id2);
-        compuerta1.conectarEntradas(compuerta2,++i);
-        compuerta2.conectarSalida(compuerta1);
+        compuerta2.conectarEntradas(compuerta1,++i);
+        compuerta1.conectarSalida(compuerta2);
+        System.out.print("Conectado "+compuerta1.getTipo()+" con "+compuerta2.getTipo()+"\n");
+    }
+    
+    
+    public void ConectarBool(String valor, int id2){ 
+        System.out.print(valor);
+        Compuertas compuerta1 = new Compuertas(valor, 0, 0);
+        Compuertas compuerta2 = buscarId(id2);
+        compuerta2.conectarEntradas(compuerta1,++i);
+        compuerta1.conectarSalida(compuerta2);
         System.out.print("Conectado "+compuerta1.getTipo()+" con "+compuerta2.getTipo()+"\n");
     }
     

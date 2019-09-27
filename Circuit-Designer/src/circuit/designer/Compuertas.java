@@ -24,13 +24,14 @@ public class Compuertas{
     
     public void operacion( ){
         Nodo current = InputGates.getHead();
+        Entradas_Salidas entrada;
         if(current == null)
             OutputGate.setValor(true);
         switch(this.tipo){
             
             case "XOR":
                 this.OutputGate.setValor(false);
-                Entradas_Salidas entrada = (Entradas_Salidas)current.getData();
+                entrada = (Entradas_Salidas)current.getData();
                 Boolean valorAnterior = entrada.getValor();
                 current = current.getNext();         
                 while (current!= null){
@@ -108,7 +109,14 @@ public class Compuertas{
                         current = current.getNext();
                     }            
                 }
-                break;   
+                break; 
+            case "FALSE":
+                System.out.print("falsoooooo");
+                this.OutputGate.setValor(false);
+                break;
+            case "TRUE":
+                this.OutputGate.setValor(true);
+                break;
                 
                 
         }  
@@ -181,6 +189,7 @@ public class Compuertas{
     public String getTipo(){
         return this.getTipoAux();
     }
+    
     
     
     

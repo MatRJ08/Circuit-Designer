@@ -33,6 +33,7 @@ public class Lista {
     public void insertFirst(Object data){
         if (head==null){
             head = new Nodo(data);
+            head.setNext(null);
         }
         else{
           Nodo temp = head;
