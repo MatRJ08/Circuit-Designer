@@ -111,7 +111,6 @@ public class Compuertas{
                 }
                 break; 
             case "FALSE":
-                System.out.print("falsoooooo");
                 this.OutputGate.setValor(false);
                 break;
             case "TRUE":

@@ -147,7 +147,6 @@ public class Grafica extends Application{
             public void handle(MouseEvent event) {
                 
                 if(event.getButton().equals(MouseButton.SECONDARY)){
-                    System.out.print("hola");
                     if(salida == null){
                         salida = objeto;
                         System.out.print(salida.getTipo());
@@ -366,45 +365,7 @@ public class Grafica extends Application{
                
     }
     
-    /**
-     * 
-     * @author Mat
-     * @version 24K09B
-     */
-    private class Linea extends Line{
-        int lineaId;
-        public Linea(){
-            this.lineaId = ++lineasIds;
-        }
-
-        public int getLineaId() {
-            return lineaId;
-        }
-
-        public void setLineaId(int lineaId) {
-            this.lineaId = lineaId;
-        }
-        
-       
-        
-    }
-    
-    /**
-     * @since 25M09A
-     * @return 
-     */
-    private Linea ObtenerLinea(){
-        Nodo current = lineas.getHead();
-        Linea linea;
-        while(current != null){
-            linea = (Linea)current.getData();
-            if(linea.getLineaId() == lineasIds){
-                return linea;
-            }
-            current = current.getNext();
-        }
-        return null;
-    }
+   
     
     /**
      * @since 25M09A
