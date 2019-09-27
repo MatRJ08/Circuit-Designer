@@ -30,7 +30,6 @@ public class Grafica extends Application{
     
     Group root = new Group();
     Scene scene = new Scene(root, 1300, 725, Color.WHITE);
-    Lista lineas =  new Lista();
     int lineasIds = 0;
     int objetosIds = 0;
     Random rand = new Random();
@@ -63,12 +62,19 @@ public class Grafica extends Application{
        
         Button simular =new Button("Simular");
         simular.relocate(50, 675);
+        Button tabla =new Button("Generar Tabla");
+        simular.relocate(100, 675);
         simular.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
                 circuito.Simular();
             }
         });
-        root.getChildren().add(simular);
+        tabla.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                generarTabla();
+            }
+        });
+        root.getChildren().addAll(simular,tabla);
         addObjeto("AND");
         addObjeto("OR");
         addObjeto("NOT");
@@ -84,6 +90,11 @@ public class Grafica extends Application{
      
     public static void main(String [] args){
         launch(args);
+    }
+    
+    
+    public void generarTabla(){
+        
     }
     
     
@@ -183,6 +194,8 @@ public class Grafica extends Application{
                             objeto.setObjetoId(++objetosIds);
                             Compuertas compuerta = circuito.addCompuerta(objeto.getTipo(),objeto.getObjetoId());
                             objeto.setCompuerta(compuerta);
+                        }else{
+                            
                         }
                         addObjeto(objeto.getTipo());
                         objeto.setMovido(true);
@@ -253,9 +266,9 @@ public class Grafica extends Application{
      * @version 25M09C
      */
     private void drawLines(Objeto salida,Objeto entrada){
-        Linea line;
+        Line line;
 //        if(!drawing){
-        line = new Linea(); 
+        line = new Line(); 
         drawing = true;
 
         line.setStartX(salida.getLayoutX()+salida.getWidth()); 
@@ -263,8 +276,7 @@ public class Grafica extends Application{
         line.setStroke(Color.rgb(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)));
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         line.setStrokeWidth(3);
-
-        lineas.insertFirst(line);            
+         
         root.getChildren().add(line);
         
         line.setEndX(entrada.getLayoutX()); 
@@ -366,12 +378,4 @@ public class Grafica extends Application{
     }
     
    
-    
-    /**
-     * @since 25M09A
-     * @return 
-     */
-    private void EliminarLinea(){
-        lineas.deleteFirst();
-    }
 }
