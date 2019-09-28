@@ -91,13 +91,4 @@ public class Lista {
         return size;
     }
     
-    public void updateGates(Lista circuito){
-        
-        Nodo current = circuito.getHead();
-        while (current != null){
-            Compuertas actual = (Compuertas)current.getData();
-            actual.operacion();
-            current = current.getNext();
-        }
-    }
 }
