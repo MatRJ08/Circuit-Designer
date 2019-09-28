@@ -110,6 +110,10 @@ public class Compuertas{
                     }            
                 }
                 break; 
+            case "NOT":
+                entrada = (Entradas_Salidas)current.getData();
+                this.OutputGate.setValor(!entrada.getValor());
+                break;
             case "FALSE":
                 this.OutputGate.setValor(false);
                 break;
