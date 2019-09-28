@@ -48,13 +48,14 @@ public class Circuito {
     }
     
     
-    public void ConectarBool(String valor, int id2){ 
-        System.out.print(valor);
-        Compuertas compuerta1 = new Compuertas(valor, 0, 0);
+    public void ConectarBool(Compuertas compuerta1, int id2){ 
+  
         Compuertas compuerta2 = buscarId(id2);
-        compuerta2.conectarEntradas(compuerta1,++i);
         compuerta1.conectarSalida(compuerta2);
+        compuerta2.conectarEntradas(compuerta1,++i);
         System.out.print("Conectado "+compuerta1.getTipo()+" con "+compuerta2.getTipo()+"\n");
+        
+        
     }
     
     
@@ -76,12 +77,17 @@ public class Circuito {
     }
     
     
-    public void Simular(){
+    public Boolean Simular(){
+        
         Compuertas compuerta = buscarFinal();
+        
         if(compuerta == null){
             System.err.print("No se puede simular");
         }else
-            System.out.print(compuerta.getSalida().getValor());
+            return compuerta.getSalida().getValor();
+        
+        return false;
+        
     }
     
     

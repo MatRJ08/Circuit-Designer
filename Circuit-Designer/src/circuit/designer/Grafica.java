@@ -13,14 +13,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -39,7 +39,7 @@ public class Grafica extends Application{
     Circuito circuito = new Circuito();
     boolean drawing = false;
     Objeto entrada = null;
-    Objeto salida = null;
+    Nodo salida = new Nodo(null);
     
     Lista entradas = new Lista();
     
@@ -67,10 +67,16 @@ public class Grafica extends Application{
         Button simular =new Button("Simular");
         simular.relocate(50, 675);
         Button btngenerarTabla =new Button("Generar Tabla");
-        simular.relocate(100, 675);
+        btngenerarTabla.relocate(150, 675);
         simular.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                circuito.Simular();
+                Boolean valorFinal = circuito.Simular();
+                String mensaje;
+                if(valorFinal)
+                    mensaje = "True";
+                else
+                    mensaje = "False";
+                JOptionPane.showMessageDialog(null, "Resultado de Simulacion "+mensaje , "Simulacion",JOptionPane.INFORMATION_MESSAGE );
             }
         });
         btngenerarTabla.setOnAction(new EventHandler<ActionEvent>() {
@@ -95,20 +101,78 @@ public class Grafica extends Application{
     public static void main(String [] args){
         launch(args);
     }
-    
+    /**
+     * @see https://codeday.me/es/qa/20190315/315468.html
+     * Logica para generar tabla de verdad
+     */
     
     public void generarTabla(){
-        TableView tablaEntradas = new TableView();
-        TableColumn col;
-        int i = 0;
-        Nodo current = entradas.getHead();
-        while( current != null){
-            Objeto entrada = (Objeto)current.getData();
-            col = new TableColumn("Entrada numero "+String.valueOf(++i));
-            current= current.getNext();
-            tablaEntradas.getColumns().add(col);
+        
+        
+        Pane secondaryLayout = new Pane();
+
+        Scene secondScene = new Scene(secondaryLayout, 700, 700);
+
+        // New window (Stage)
+        Stage newWindow = new Stage();
+        newWindow.setTitle("Tabla de Verdad");
+        newWindow.setScene(secondScene);
+
+        // Set position of second window, related to primary window.
+        newWindow.setX(200);
+        newWindow.setY(20);
+        Label label;
+        
+        double posX = 50;
+        double posY = 30;
+        int i=0;
+        while( i != entradas.getSize()){
+            label =new Label("Entrada "+String.valueOf(++i));
+            label.relocate(posX, posY);
+            posX += 75;
+            secondaryLayout.getChildren().add(label);
         }
-        root.getChildren().addAll(tablaEntradas);
+        label =new Label("Resultado");
+        label.relocate(posX, posY);
+        secondaryLayout.getChildren().add(label);
+        int n = entradas.getSize();
+        int rows = (int) Math.pow(2,n);
+        
+ 
+ 
+        for (int k=0; k<rows; k++) {
+            posX = 50;
+            posY += 30;
+            for (int j=n-1; j>=0; j--) {
+                Nodo current = entradas.getHead();
+                int e = (k/(int) Math.pow(2, j))%2;
+                
+                Objeto entrada = (Objeto)current.getData();
+                Compuertas compuerta = entrada.getCompuerta();
+                if(e == 0)
+                    compuerta.setTipo("FALSE");
+                else
+                    compuerta.setTipo("TRUE");
+                label =new Label(String.valueOf(e));
+                label.relocate(posX, posY);
+                posX += 75;
+//                root.getChildren().add(label);
+//              
+                System.out.println(e);
+                current= current.getNext();
+                secondaryLayout.getChildren().add(label);
+            }
+            Boolean resultado = circuito.Simular();
+            if(resultado)
+                label =new Label("1");
+            else
+                label =new Label("0");
+            label.relocate(posX, posY);
+            secondaryLayout.getChildren().add(label);
+            
+        }
+        newWindow.show();
+        
     }
     
     
@@ -172,20 +236,21 @@ public class Grafica extends Application{
             public void handle(MouseEvent event) {
                 
                 if(event.getButton().equals(MouseButton.SECONDARY)){
-                    if(salida == null){
-                        salida = objeto;
+                    if(salida.getData() == null){
+                        salida.setData(objeto);
                     }
                     else{
-                        if(salida.getTipo() != "FALSE" && salida.getTipo() != "TRUE"){
+                        Objeto tipo = (Objeto)salida.getData();
+                        if(tipo.getTipo() != "FALSE" && tipo.getTipo() != "TRUE"){
                             entrada = objeto;
-                            circuito.Conectar(salida.getObjetoId(),objeto.getObjetoId());
+                            circuito.Conectar(tipo.getObjetoId(),objeto.getObjetoId());
                             
                         }else{
-                            circuito.ConectarBool(salida.getTipo(), objeto.getObjetoId());
+                            circuito.ConectarBool(tipo.getCompuerta(), objeto.getObjetoId());
                             
                         }
-                        drawLines(salida,objeto);
-                        salida = null;
+                        drawLines(tipo,objeto);
+                        salida.setData(null);
                         entrada = null;
                     }
                 }
@@ -208,6 +273,8 @@ public class Grafica extends Application{
                             objeto.setCompuerta(compuerta);
                         }else{
                             System.out.println("Entrada added");
+                            Compuertas compuerta = new Compuertas(objeto.getTipo(),0,0);
+                            objeto.setCompuerta(compuerta);
                             entradas.insertFirst(objeto);
                         }
                         addObjeto(objeto.getTipo());

@@ -188,6 +188,10 @@ public class Compuertas{
     public String getTipo(){
         return this.getTipoAux();
     }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
     
     
     
